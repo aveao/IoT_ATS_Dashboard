@@ -1,13 +1,18 @@
-# American Truck Simulator / Euro Truck Simulator 2 Dashboard for Wemos D1 Mini
+# American Truck Simulator / Euro Truck Simulator 2 Dashboard for IoT devices
 
-Shows data from https://github.com/Funbit/ets2-telemetry-server on Wemos D1 Mini. Should work with other ESP8266 models too, or even other Arduinos.
+Shows data from https://github.com/Funbit/ets2-telemetry-server on IoT devices. 
 
-Requires Wemos D1 Mini and OLED shield. Written in ~4 hours (most of it was playtesting though)
+Wemos code is Written in ~4 hours (most of it was playtesting though)
 
+# Supported Platforms
+
+Wemos D1 Mini (Might work with other esp8266 or Arduino boards)
 
 ![How it looks 2](http://i.imgur.com/nog3AaS.jpg)
 
-# How to use
+Coming soon: Pebble
+
+# How to use (Wemos D1 Mini)
 
 Install and run this: https://github.com/Funbit/ets2-telemetry-server
 
