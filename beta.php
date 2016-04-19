@@ -8,7 +8,10 @@ foreach ($jsonIterator as $key => $val) {
         echo "<speed>".$val."</speed>";
 
         if ($key == "speedLimit")
-        echo "<SpeedLimit>".$val."</SpeedLimit>";
+        echo "<speedLimit>".$val."</speedLimit>";
+
+        if ($key == "engineOn")
+        echo "<engineOn>".$val."</engineOn>";
     }
 }
 ?>
