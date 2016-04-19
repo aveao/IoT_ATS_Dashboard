@@ -52,14 +52,28 @@ void setup()   {
   // init done
 
   display.display();
-  delay(1000);
   display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.print("Connecting to ");
+  display.println(ssid);
+  display.display();
   
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
+  display.print(".");
+  display.display();
     delay(500);
   }
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.println("Connected!");
+  display.print("IP: ");
+  display.println(WiFi.localIP());
+  display.display();
+  delay(1000);
 
   display.clearDisplay();
 
@@ -107,13 +121,17 @@ WiFiClient client1;
   int thespeedlimit = thing.substring(thing.indexOf("<l>") + 3, thing.lastIndexOf("</l>")).toInt();
   String engineState = thing.substring(thing.indexOf("<e>") + 3, thing.lastIndexOf("</e>"));
   bool IsOverLimit = (thespeed > thespeedlimit);
+  if (thespeedlimit == 0)
+  {
+    IsOverLimit = false;
+  }
   
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
   display.println("Speed:");
-  if (engineState=="0")
+  if (engineState=="")
   {
   display.print("Engine off");
   }
@@ -155,7 +173,7 @@ WiFiClient client1;
   display.print("km/h");
   }
   display.display();
-  //delay(250);
+  delay(1000);
   }
   }
 }
