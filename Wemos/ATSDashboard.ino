@@ -44,6 +44,7 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
 #endif
 
 void setup()   {
+  bool mile = true;
   Serial.begin(9600);
 
   // by default, we'll generate the high voltage from the 3.3v line internally! (neat!)
@@ -65,21 +66,25 @@ void setup()   {
 WiFiClient client1;
   const int httpPort = 80;
 
-  while (true)
-  {  
   if (!client1.connect(host, httpPort)) {
     Serial.println("connection failed");
     return;
   }
+  
+  while (true)
+  {  
   // We now create a URI for the request
-  String url = "/data.php?key=speed";
+  String url = "/data.php";
+  if (mile)
+  {
+    url += "?m=";
+  }
   Serial.print("Requesting URL: ");
   Serial.println(url);
   
-  // This will send the request to the server
   client1.print(String("GET ") + url + " HTTP/1.1\r\n" +
                "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
+               "Connection: Keep-Alive\r\n\r\n");
   delay(500);
   
   String thing = "";
@@ -89,52 +94,69 @@ WiFiClient client1;
     thing = thing + line;
     Serial.print(line);
   }
-  String thespeed = thing.substring(thing.indexOf("<val>") + 5, thing.lastIndexOf("</val>"));
-  
+  if (thing == "")
+  {
   if (!client1.connect(host, httpPort)) {
     Serial.println("connection failed");
     return;
   }
-  // We now create a URI for the request
-  String url1 = "/data.php?key=speedLimit";
-  Serial.print("Requesting URL: ");
-  Serial.println(url1);
-  
-  // This will send the request to the server
-  client1.print(String("GET ") + url1 + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
-  delay(500);
-  
-  String thing1 = "";
-  
-  while(client1.available()){
-    String line = client1.readString();
-    thing1 = thing1 + line;
-    Serial.print(line);
   }
-  String thespeedlimit = thing1.substring(thing1.indexOf("<val>") + 5, thing1.lastIndexOf("</val>"));
+  else
+  {
+  int thespeed = thing.substring(thing.indexOf("<s>") + 3, thing.lastIndexOf("</s>")).toInt();
+  int thespeedlimit = thing.substring(thing.indexOf("<l>") + 3, thing.lastIndexOf("</l>")).toInt();
+  String engineState = thing.substring(thing.indexOf("<e>") + 3, thing.lastIndexOf("</e>"));
+  bool IsOverLimit = (thespeed > thespeedlimit);
   
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0,0);
   display.println("Speed:");
+  if (engineState=="0")
+  {
+  display.print("Engine off");
+  }
+  else
+  {
   display.setTextSize(2);
-  
-  display.print(thespeed.substring(0, thespeed.indexOf(".")));
+  if (IsOverLimit)
+  {
+  display.setTextColor(BLACK, WHITE);
+  }
+  display.print(thespeed);
   display.setTextSize(1);
+  if (mile)
+  {
+  display.print("mph");
+  }
+  else
+  {
   display.print("km/h");
+  }
+  if (IsOverLimit)
+  {
+  display.setTextColor(WHITE, BLACK);
+  }
+  }
   display.setTextSize(2);
-  display.println(" ");
+  display.println("");
   display.setTextSize(1);
   display.println("Limit: ");
   display.setTextSize(2);
   display.print(thespeedlimit);
   display.setTextSize(1);
+  if (mile)
+  {
+  display.print("mph");
+  }
+  else
+  {
   display.print("km/h");
+  }
   display.display();
-  delay(250);
+  //delay(250);
+  }
   }
 }
 
